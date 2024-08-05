@@ -38,7 +38,7 @@ speech_synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, au
 
 def recognize_speech():
     '''
-    Google Speech Recognition
+    This function uses Google Speech Recognition to get the user's spoken input.
     '''
     recognizer = sr.Recognizer()
     with sr.Microphone() as source:
@@ -56,13 +56,16 @@ def recognize_speech():
         print(f"Could not request results from Google Speech Recognition service; {e}")
         return None
 
-def chatgpt_response(prompt):
+def chatgpt_response(user_prompt, system_prompt):
+    '''
+    This function gets a response from ChatGPT.
+    '''
     try:
         response = openai.ChatCompletion.create(
             engine=deployment_name,
             messages=[
-                {"role": "system", "content": "You are an imaginary friend for a 3-year-old that has the main purpose of teaching them a language. You talk about ocean animals and dinosaurs. Using very short and simple sentences, include a Spanish word in each answer. Ask simple questions to keep the conversation going. Limit your answers to 1-2 short sentences."},
-                {"role": "user", "content": prompt}
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
             ],
             max_tokens=100,
             temperature=0.7,
@@ -76,6 +79,9 @@ def chatgpt_response(prompt):
         return "I couldn't understand that. Try again."
     
 def synthesize_speech(text):
+    '''
+    This function synthesizes the text to speech.
+    '''
     try:
         result = speech_synthesizer.speak_text_async(text).get()
         if result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
@@ -89,12 +95,14 @@ def synthesize_speech(text):
         print(f"Error during speech synthesis: {e}")
 
 def main():
+    system_prompt = "You are an imaginary friend for a 3-year-old that has the main purpose of teaching them a language. You talk about ocean animals and dinosaurs. Using very short and simple sentences, include a Spanish word in each answer. Ask simple questions to keep the conversation going. Limit your answers to 1-2 short sentences."
+
     print("Starting. Press Ctrl+C to exit.")
     try:
         while True:
             text = recognize_speech()
             if text:
-                response = chatgpt_response(text)
+                response = chatgpt_response(text, system_prompt)
                 print(f"ChatGPT response: {response}")
                 synthesize_speech(response)
             else:
