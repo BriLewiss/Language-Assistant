@@ -9,12 +9,13 @@ export AZURE_OPENAI_KEY="your_azure_openai_key"
 export AZURE_OPENAI_DEPLOYMENT_NAME="your_azure_openai_deployment_name"
 export AZURE_SPEECH_KEY="your_azure_speech_key"
 export AZURE_SERVICE_REGION="your_service_region"
+export AZURE_OPENAI_API_VERSION=”your_api_version"
 '''
 
 # Azure OpenAI Service credentials
 openai.api_type = "azure"
 openai.api_base = os.getenv('AZURE_OPENAI_ENDPOINT')
-openai.api_version = "2023-05-15"
+openai.api_version = os.getenv('AZURE_OPENAI_API_VERSION')
 openai.api_key = os.getenv('AZURE_OPENAI_KEY')
 
 # The deployment name you chose when you deployed the model
